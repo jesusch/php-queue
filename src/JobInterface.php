@@ -5,13 +5,13 @@ interface JobInterface
 {
 
     /**
-     * Set up environment for this job
+     * Sets the current PID
      */
     public function setPid($pid);
 
 
     /**
-     * Run job
+     * Runs the real job code
      */
     public function run();
 }

@@ -24,16 +24,21 @@ abstract class AbstractJob implements JobInterface
         $this->logger = $logger;
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \JobQueue\JobInterface::setPid()
+     */
     public function setPid($pid)
     {
         $pid = (integer) $pid;
         $this->pid = $pid;
     }
     
-    
+
     /**
-     * Run job
-    */
+     * (non-PHPdoc)
+     * @see \JobQueue\JobInterface::run()
+     */
     public function run() {}
 
     
