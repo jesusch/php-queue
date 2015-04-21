@@ -1,6 +1,19 @@
 {
+    "name": "jesusch/php-queue",
+    "description": "PHP Class to handle concurrent running Jobs to utilize the power of multiple cores",
+    "license": "Apache 2.0",
+    "keywords": ["queue", "fork"],
+    "authors": [
+        {
+            "name": "Björn Boschman",
+            "email": "bjoern@boschman.de"
+        }
+    ],
+
     "require": {
-        "psr/log": "1.0.0",
+        "psr/log": "1.0.0"
+    },
+    "require-dev": {
         "apache/log4php": "2.3.0"
     },
     "autoload": {

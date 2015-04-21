@@ -1,6 +1,6 @@
 <?php
 
-namespace JobDaemon;
+namespace JobQueue;
 
 use Psr\Log\NullLogger;
 declare(ticks=1);
@@ -15,13 +15,13 @@ declare(ticks=1);
  * @author jesusch
  *
  */
-class JobDaemon{
+class Queue{
 
     /**
      * 
-     * @var integer number of concurrent running jobs
+     * @var number of concurrent running jobs
      */
-    private $maxProcesses = 25;
+    private $maxProcesses;
     protected $jobsStarted = 0;
     protected $currentJobs = array();
     protected $signalQueue=array();
@@ -29,7 +29,7 @@ class JobDaemon{
     
     /**
      * 
-     * @var NullLogger
+     * @var Psr\Log\NullLogger
      */
     private $logger;
 
@@ -37,13 +37,24 @@ class JobDaemon{
     /**
      * 
      * @param number $maxProcs
-     * @param NullLogger $logger
+     * @param \Psr\Log\NullLogger $logger
      */
-    public function __construct($maxProcs=10, $logger){
-        $this->maxProcesses = $maxProcs;
+    public function __construct($logger=null, $maxProcs=10) {
+        
+        $this->maxProcesses = (int) $maxProcs;
         $this->logger = $logger;
         $this->parentPID = getmypid();
         pcntl_signal(SIGCHLD, array($this, "childSignalHandler"));
+    }
+    
+    
+    /**
+     * Set the number of maxprocesses
+     * @param number $maxProcs
+     */
+    public function setMaxProcs($maxProcs)
+    {
+        $this->maxProcesses = (int) $maxProcs;
     }
 
 
@@ -61,19 +72,11 @@ class JobDaemon{
 
     /**
      * append a new Job
-     * @param \JobDaemon\Job $job
+     * @param JobQueue\Job $job
      */
-    public function appendJob(\JobDaemon\Job $job)
+    public function appendJob(JobInterface $job)
     {
         $jobID = rand(0,10000000000000);
-        $this->launchJob($jobID, $job);
-    }
-
-    /**
-     * Launch a job from the job queue
-     */
-    protected function launchJob($jobID, \JobDaemon\Job $job)
-    {
 
         while(count($this->currentJobs) >= $this->maxProcesses){
             $this->logger->debug("Maximum children allowed, waiting...");
@@ -111,7 +114,7 @@ class JobDaemon{
         return true;
     }
 
-    public function childSignalHandler($signo, $pid=null, $status=null){
+    protected function childSignalHandler($signo, $pid=null, $status=null){
 
         //If no pid is provided, that means we're getting the signal from the system.  Let's figure out
         //which child process ended

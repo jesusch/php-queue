@@ -1,34 +1,10 @@
 <?php
-namespace JobDaemon;
+namespace JobQueue;
 
-use Psr\Log\NullLogger;
-
-class Job
+class Job extends AbstractJob
 {
 
-    /**
-     * 
-     * @var integer PID of this process
-     */
-    private $pid;
 
-    /**
-     *
-     * @var NullLogger
-     */
-    private $logger;
-
-    public function __construct($logger)
-    {
-        $this->logger = $logger;
-    }
-
-
-    public function setPid($pid)
-    {
-        $pid = (integer) $pid;
-        $this->pid = $pid;
-    }
 
     public function run()
     {
@@ -37,7 +13,7 @@ class Job
         
         sleep($sleep);
 
-
     }
+
 
 }
